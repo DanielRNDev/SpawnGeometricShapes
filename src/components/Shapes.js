@@ -1,43 +1,21 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, ImageBackground } from 'react-native'
+import {
+  View,
+  PanResponder,
+  StyleSheet,
+} from 'react-native'
 import Svg, {
   Circle,
   Rect,
-  Image
+  Image,
+  Defs,
+  ClipPath,
+  Polygon
 } from 'react-native-svg'
 import * as Animatable from 'react-native-animatable'
 import { SQUARE, CIRCLE, TRIANGLE } from '../constants'
 
 const styles = StyleSheet.create({
-  triangle: {
-    width: 0,
-    height: 0,
-    borderStyle: 'solid',
-    backgroundColor: 'transparent',
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-  },
-  triangleCornerTopLeft: {
-    width: 0,
-    height: 0,
-    position: 'absolute',
-    top: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderRightColor: 'transparent',
-    borderTopColor: '#fff',
-  },
-  triangleCornerTopRight: {
-    width: 0,
-    height: 0,
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftColor: 'transparent',
-    borderTopColor: '#fff',
-  },
   shapeWrapper: {
     position: 'absolute'
   }
@@ -45,89 +23,127 @@ const styles = StyleSheet.create({
 const AnimatableView = Animatable.createAnimatableComponent(View)
 
 export default class Shapes extends Component {
+  constructor(props) {
+    super(props)
+    const { positionX, positionY } = this.props
+
+    this.state = {
+      left: positionX,
+      top: positionY,
+      pressed: false,
+    }
+
+    this.previousLeft = positionX
+    this.previousTop = positionY
+  }
+
+  handleStartShouldSetPanResponder = (event) => {
+    event && event.preventDefault && event.preventDefault()
+    return true
+  }
+
+  handleMoveShouldSetPanResponder = (event) => {
+    event && event.preventDefault && event.preventDefault()
+    return true
+  }
+
+  handlePanResponderGrant = () => {
+    this.setState({
+      pressed: true,
+    })
+  }
+
+  handlePanResponderMove = (event, gestureState) => {
+    this.setState({
+      left: this.previousLeft + gestureState.dx,
+      top: this.previousTop + gestureState.dy,
+    })
+  }
+
+  handlePanResponderEnd = (event, gestureState) => {
+    const { updateShapeValue } = this.props
+
+    this.setState({
+      pressed: false,
+    })
+    this.previousLeft += gestureState.dx
+    this.previousTop += gestureState.dy
+
+    updateShapeValue({
+      positionX: this.previousLeft,
+      positionY: this.previousTop
+    })
+  }
+
+  panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: this.handleStartShouldSetPanResponder,
+    onMoveShouldSetPanResponder: this.handleMoveShouldSetPanResponder,
+    onPanResponderGrant: this.handlePanResponderGrant,
+    onPanResponderMove: this.handlePanResponderMove,
+    onPanResponderRelease: this.handlePanResponderEnd,
+    onPanResponderTerminate: this.handlePanResponderEnd,
+  })
+
   renderSquare = () => {
-    const { image, size, color, positionX, positionY } = this.props
+    const { image, size, color } = this.props
 
     return (
-      <View style={[styles.shapeWrapper, { top: positionY, left: positionX }]}>
-        <Svg width={size} height={size}>
-          {
-            image
-              ? <Image
-                width={size}
-                height={size}
-                preserveAspectRatio="xMidYMid slice"
-                href={{ uri: image }}
-              />
-              : <Rect
-                width={size}
-                height={size}
-                fill={color}
-              />
-          }
-        </Svg>
-      </View>
+      <Svg width={size} height={size}>
+        {
+          image
+            ? <Image
+              width={size}
+              height={size}
+              preserveAspectRatio="xMidYMid slice"
+              href={{ uri: image }}
+            />
+            : <Rect
+              width={size}
+              height={size}
+              fill={color}
+            />
+        }
+      </Svg>
     )
   }
 
   renderCircle = () => {
-    const { size, color, positionX, positionY } = this.props
+    const { size, color } = this.props
     const r = size / 2
 
     return (
-      <View style={[styles.shapeWrapper, { top: positionY, left: positionX }]}>
-        <Svg height={size} width={size}>
-          <Circle cx={r} cy={r} r={r} fill={color} />
-        </Svg>
-      </View>
+      <Svg height={size} width={size}>
+        <Circle cx={r} cy={r} r={r} fill={color} />
+      </Svg>
     )
   }
 
   renderTriangle = () => {
-    const { image, size, color, positionX, positionY } = this.props
-    const triangleSize = size % 2 == 0 ? size : size + 1 // Convert the size to even so triangle image will not wrong absolute position
+    const { image, size, color, points } = this.props
 
     if (image) {
       return (
-        <View style={[styles.shapeWrapper, { width: triangleSize, height: triangleSize, top: positionY, left: positionX }]}>
-          <ImageBackground
-            style={{ width: triangleSize, height: triangleSize }}
-            source={{uri: image}}
-          >
-            <View style={[
-              styles.triangleCornerTopLeft,
-              {
-                borderRightWidth: triangleSize / 2,
-                borderTopWidth: triangleSize,
-              }
-            ]} />
-            <View style={[
-              styles.triangleCornerTopRight,
-              {
-                borderLeftWidth: triangleSize / 2,
-                borderTopWidth: triangleSize,
-              }
-            ]} />
-          </ImageBackground>
-        </View>
+        <Svg height={size} width={size}>
+          <Defs>
+            <ClipPath id="clip">
+              <Polygon points={points} />
+            </ClipPath>
+          </Defs>
+          <Image
+            width={size}
+            height={size}
+            preserveAspectRatio="xMidYMid slice"
+            href={{ uri: image }}
+            clipPath="url(#clip)"
+          />
+        </Svg>
       )
     }
 
     return (
-      <View
-        style={[
-          styles.shapeWrapper,
-          styles.triangle,
-          {
-            borderLeftWidth: triangleSize,
-            borderRightWidth: triangleSize,
-            borderBottomWidth: triangleSize * 2,
-            borderBottomColor: color,
-            top: positionY,
-            left: positionX
-          }
-        ]}
-      />
+      <Svg height={size} width={size}>
+        <Polygon points={points} fill={color} />
+      </Svg>
     )
   }
 
@@ -151,7 +167,17 @@ export default class Shapes extends Component {
 
   render() {
     return (
-      <AnimatableView animation="bounceIn">
+      <AnimatableView
+        animation="bounceIn"
+        {...this.panResponder.panHandlers}
+        style={[
+          styles.shapeWrapper,
+          {
+            left: this.state.left,
+            top: this.state.top,
+          }
+        ]}
+      >
         {this.renderShape()}
       </AnimatableView>
     )

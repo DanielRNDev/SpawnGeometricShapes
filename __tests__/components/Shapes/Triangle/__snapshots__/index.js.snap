@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shapes Components renders triangle with image correctly 1`] = `
+<View
+  onMoveShouldSetResponder={[Function]}
+  onMoveShouldSetResponderCapture={[Function]}
+  onResponderEnd={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderReject={[Function]}
+  onResponderRelease={[Function]}
+  onResponderStart={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onStartShouldSetResponderCapture={[Function]}
+  style={
+    Object {
+      "left": 50,
+      "opacity": 0,
+      "position": "absolute",
+      "top": 100,
+      "transform": Array [
+        Object {
+          "scale": 0.3,
+        },
+      ],
+    }
+  }
+>
+  <RNSVGSvgView
+    bbHeight={150}
+    bbWidth={150}
+    focusable={false}
+    height={150}
+    style={
+      Array [
+        Object {
+          "backgroundColor": "transparent",
+          "borderWidth": 0,
+        },
+        Object {
+          "flex": 0,
+          "height": 150,
+          "width": 150,
+        },
+      ]
+    }
+    width={150}
+  >
+    <RNSVGGroup>
+      <RNSVGDefs>
+        <RNSVGClipPath
+          name="clip"
+        >
+          <RNSVGPath
+            d=""
+          />
+        </RNSVGClipPath>
+      </RNSVGDefs>
+      <RNSVGImage
+        align="xMidYMid"
+        clipPath="clip"
+        height={150}
+        meetOrSlice={1}
+        src={
+          Object {
+            "uri": "https://reactnative.dev/img/tiny_logo.png",
+          }
+        }
+        width={150}
+        x={0}
+        y={0}
+      />
+    </RNSVGGroup>
+  </RNSVGSvgView>
+</View>
+`;

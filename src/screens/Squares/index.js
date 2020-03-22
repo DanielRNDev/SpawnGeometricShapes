@@ -53,7 +53,7 @@ export default class Squares extends Component {
       positionX: e.nativeEvent ? e.nativeEvent.locationX - size / 2 : 0,
       positionY: e.nativeEvent ? e.nativeEvent.locationY - size / 2 : 0,
       color: `#${randomColor}`,
-      image: imageUrl,
+      image: imageUrl || 'https://reactnative.dev/img/tiny_logo.png',
     })
 
     this.setState({ shapes, itemSpawned: shapes.length })

@@ -54,7 +54,7 @@ export default class Triangles extends Component {
       positionX: e.nativeEvent ? e.nativeEvent.locationX - size / 2 : 0,
       positionY: e.nativeEvent ? e.nativeEvent.locationY - size / 2 : 0,
       color: `#${hex}`,
-      image: RANDOM_API === PATTERNS_API ? imageUrl : '',
+      image: RANDOM_API === PATTERNS_API ? imageUrl : null,
       points: getTrianglePoint(size)
     })
 

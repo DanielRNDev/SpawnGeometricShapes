@@ -7,7 +7,7 @@ import {
 import axios from 'axios'
 import RNShake from 'react-native-shake';
 import { Header, Shapes } from '../../components'
-import { getShapeSize, debounceEventHandler } from '../../utils'
+import { getShapeSize, debounceEventHandler, getTrianglePoint } from '../../utils'
 import { SQUARE, CIRCLE, TRIANGLE, SHAPE_LIST, COLORS_API, PATTERNS_API } from '../../constants'
 import styles from './styles'
 
@@ -61,7 +61,7 @@ export default class AllShapes extends Component {
         shapes.push({
           ...defaults,
           color: `#${randomColor}`,
-          image: imageUrl,
+          image: imageUrl || 'https://reactnative.dev/img/tiny_logo.png',
         })
 
         break;
@@ -89,6 +89,7 @@ export default class AllShapes extends Component {
           ...defaults,
           color: `#${hex}`,
           image: RANDOM_API === PATTERNS_API ? imageUrl : null,
+          points: getTrianglePoint(size)
         })
         break;
       }
